@@ -70,7 +70,7 @@ def update_room(request, pk):
 
 
 @login_required(login_url='login')
-def delete_room(request, pk):
+def delete(request, pk):
     room = Room.objects.get(id=pk)
 
     if request.user is not room.host:
@@ -80,7 +80,7 @@ def delete_room(request, pk):
         room.delete()
         return redirect('home')
 
-    return render(request, 'base/delete_room.html', {'obj': room})
+    return render(request, 'base/delete.html', {'obj': room})
 
 
 def login_page(request):
