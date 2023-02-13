@@ -34,6 +34,8 @@ def home(request):
 
     return render(request, 'base/home.html', context)
 
+# ROOM ----------------------------------------------------
+
 
 def room(request, pk):
     room = Room.objects.get(id=pk)
@@ -91,6 +93,8 @@ def update_room(request, pk):
 
     return render(request, 'base/room_form.html', context)
 
+# DELETE --------------------------------------------------
+
 
 @login_required(login_url='login')
 def delete(request, pk):
@@ -117,6 +121,8 @@ def delete_message(request, pk):
         message.delete()
         return redirect('home')
     return render(request, 'base/delete.html', {'obj': message})
+
+# LOGIN/LOGOUT/REGISTER -----------------------------------
 
 
 def login_page(request):
@@ -166,3 +172,19 @@ def register_page(request):
             messages.error(request, 'An error occurred during registration')
 
     return render(request, 'base/login_register.html', {'form': form})
+
+# USER --------------------------------------------------
+
+
+def user_profile(request, pk):
+    user = User.objects.get(id=pk)
+    rooms = user.room_set.all()
+    room_messages = user.message_set.all()
+    topics = Topic.objects.all()
+    context = {
+        'user': user, 'rooms': rooms,
+        'room_messages': room_messages,
+        'topics': topics
+        }
+
+    return render(request, 'base/profile.html', context)
