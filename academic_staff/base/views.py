@@ -7,7 +7,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from .models import Room, Topic, Message
-from .forms import RoomForm
+from .forms import RoomForm, UserForm
 
 # Create your views here.
 
@@ -63,7 +63,7 @@ def room(request, pk):
 @login_required(login_url='login')
 def create_room(request):
     form = RoomForm()
-    topics = Topic.objects.all() 
+    topics = Topic.objects.all()
 
     if request.method == 'POST':
         topic_name = request.POST.get('topic')
@@ -200,3 +200,21 @@ def user_profile(request, pk):
         }
 
     return render(request, 'base/profile.html', context)
+
+
+@login_required(login_url='login')
+def update_user(request):
+    user = request.user
+    form = UserForm(instance=request.user)
+
+    if request.method == 'POST':
+        form = UserForm(request.POST, instance=user)
+        if form.is_valid():
+            form.save()
+            return redirect('user_profile', pk=user.id)
+        else:
+            messages.error(request, 'An error occurred during registration')
+
+    return render(request, 'base/update_user.html', {
+        'form': form,
+    })
